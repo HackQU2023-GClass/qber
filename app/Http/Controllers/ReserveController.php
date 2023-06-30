@@ -39,10 +39,11 @@ class ReserveController extends Controller
             config: $config,
         );
         $message = new \LINE\Clients\MessagingApi\Model\TextMessage(['type' => 'text','text' => 'あなたにライドシェアが申し込まれました！']);
-        $request = new \LINE\Clients\MessagingApi\Model\BroadcastRequest([
+        $request = new \LINE\Clients\MessagingApi\Model\PushMessageRequest([
+            'to' => $schedule->user->lineid,
             'messages' => [$message],
         ]);
-        $response = $messagingApi->broadcast($request);
+        $response = $messagingApi->pushMessage($request);
 
         return redirect()->back();
     }
@@ -86,10 +87,11 @@ class ReserveController extends Controller
             config: $config,
         );
         $message = new \LINE\Clients\MessagingApi\Model\TextMessage(['type' => 'text','text' => 'ライドシェアがキャンセルされました']);
-        $request = new \LINE\Clients\MessagingApi\Model\BroadcastRequest([
+        $request = new \LINE\Clients\MessagingApi\Model\PushMessageRequest([
+            'to' => $schedule->user->lineid,
             'messages' => [$message],
         ]);
-        $response = $messagingApi->broadcast($request);
+        $response = $messagingApi->pushMessage($request);
 
         return redirect()->back();
     }
