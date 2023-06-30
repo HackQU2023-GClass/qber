@@ -30,6 +30,20 @@ class ReserveController extends Controller
     public function store(Schedule $schedule)
     {
         $schedule->users()->attach(Auth::id());
+
+        $client = new \GuzzleHttp\Client();
+        $config = new \LINE\Clients\MessagingApi\Configuration();
+        $config->setAccessToken(config('services.line.message.channel_token'));
+        $messagingApi = new \LINE\Clients\MessagingApi\Api\MessagingApiApi(
+            client: $client,
+            config: $config,
+        );
+        $message = new \LINE\Clients\MessagingApi\Model\TextMessage(['type' => 'text','text' => 'あなたにライドシェアが申し込まれました！']);
+        $request = new \LINE\Clients\MessagingApi\Model\BroadcastRequest([
+            'messages' => [$message],
+        ]);
+        $response = $messagingApi->broadcast($request);
+
         return redirect()->back();
     }
 
@@ -63,6 +77,20 @@ class ReserveController extends Controller
     public function destroy(Schedule $schedule)
     {
         $schedule->users()->detach(Auth::id());
+
+        $client = new \GuzzleHttp\Client();
+        $config = new \LINE\Clients\MessagingApi\Configuration();
+        $config->setAccessToken(config('services.line.message.channel_token'));
+        $messagingApi = new \LINE\Clients\MessagingApi\Api\MessagingApiApi(
+            client: $client,
+            config: $config,
+        );
+        $message = new \LINE\Clients\MessagingApi\Model\TextMessage(['type' => 'text','text' => 'ライドシェアがキャンセルされました']);
+        $request = new \LINE\Clients\MessagingApi\Model\BroadcastRequest([
+            'messages' => [$message],
+        ]);
+        $response = $messagingApi->broadcast($request);
+
         return redirect()->back();
     }
 }
